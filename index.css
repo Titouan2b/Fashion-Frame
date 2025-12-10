@@ -1,0 +1,276 @@
+/* --- CONFIGURATION --- */
+:root {
+    --ui-bg: rgba(15, 15, 20, 0.95);
+    --ui-border: rgba(255, 255, 255, 0.2);
+    --highlight: #d4af37; /* Or Orokin */
+    --highlight-dim: rgba(212, 175, 55, 0.1);
+    --text-main: #eeeeee;
+    --input-bg: rgba(0, 0, 0, 0.4);
+}
+
+body {
+    margin: 0;
+    background: radial-gradient(circle at center, #1a1a24 0%, #050505 100%);
+    height: 100vh;
+    color: var(--text-main);
+    font-family: 'Roboto', sans-serif;
+    overflow: hidden;
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+}
+
+.fog {
+    position: absolute;
+    top: 0; left: 0; width: 100%; height: 100%;
+    background: url('https://www.transparenttextures.com/patterns/stardust.png');
+    opacity: 0.1;
+    pointer-events: none;
+    z-index: -1;
+}
+
+/* --- ZONE CENTRALE (IMAGE) --- */
+.preview-area {
+    position: absolute;
+    left: 50%;
+    top: 50%;
+    transform: translate(-50%, -50%);
+    width: 500px;
+    height: 600px;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    z-index: 0;
+}
+
+.warframe-img {
+    max-width: 100%;
+    max-height: 100%;
+    object-fit: contain;
+    filter: drop-shadow(0 0 20px rgba(0,0,0,0.5));
+}
+
+.energy-glow {
+    position: absolute;
+    width: 100%;
+    height: 100%;
+    background: radial-gradient(circle, var(--energy-color, transparent) 0%, transparent 70%);
+    opacity: 0.2;
+    mix-blend-mode: screen;
+    pointer-events: none;
+}
+
+/* --- MENU GAUCHE (CONTAINER) --- */
+.left-panel-container {
+    width: 340px;
+    height: 600px; /* Plus grand pour accommoder la liste */
+    margin-left: 50px;
+    position: relative;
+    overflow: hidden; 
+    clip-path: polygon(0 0, 100% 0, 100% 95%, 90% 100%, 0 100%);
+    background: var(--ui-bg);
+    border-left: 2px solid var(--highlight);
+    z-index: 10;
+}
+
+/* Les couches (Layers) de menu */
+.menu-layer {
+    position: absolute;
+    top: 0; left: 0;
+    width: 100%; height: 100%;
+    padding: 20px;
+    box-sizing: border-box;
+    transition: transform 0.4s cubic-bezier(0.25, 1, 0.5, 1), opacity 0.4s;
+    display: flex;
+    flex-direction: column;
+    overflow-y: auto; /* Scroll si la liste est longue */
+}
+
+/* Scrollbar subtile */
+.menu-layer::-webkit-scrollbar { width: 4px; }
+.menu-layer::-webkit-scrollbar-track { background: transparent; }
+.menu-layer::-webkit-scrollbar-thumb { background: var(--highlight); }
+
+/* --- GESTION DES POSITIONS DES MENUS --- */
+/* Par défaut : Menu Principal visible, les autres à droite */
+#main-menu { transform: translateX(0); opacity: 1; }
+#accessories-menu { transform: translateX(100%); opacity: 0; pointer-events: none; }
+#syandana-menu { transform: translateX(100%); opacity: 0; pointer-events: none; }
+
+/* ETAT 1: Afficher Accessoires */
+.left-panel-container.state-accessories #main-menu { transform: translateX(-50%); opacity: 0; pointer-events: none; }
+.left-panel-container.state-accessories #accessories-menu { transform: translateX(0); opacity: 1; pointer-events: auto; }
+.left-panel-container.state-accessories #syandana-menu { transform: translateX(100%); opacity: 0; pointer-events: none; }
+
+/* ETAT 2: Afficher Syandana */
+.left-panel-container.state-syandana #main-menu { transform: translateX(-50%); opacity: 0; }
+.left-panel-container.state-syandana #accessories-menu { transform: translateX(-50%); opacity: 0; pointer-events: none; }
+.left-panel-container.state-syandana #syandana-menu { transform: translateX(0); opacity: 1; pointer-events: auto; }
+
+
+/* --- ELEMENTS UI --- */
+h1 {
+    font-family: 'Orbitron', sans-serif;
+    font-size: 18px;
+    text-transform: uppercase;
+    border-bottom: 1px solid var(--ui-border);
+    padding-bottom: 10px;
+    margin-top: 0;
+    margin-bottom: 15px;
+    display: flex;
+    align-items: center;
+    gap: 10px;
+    position: sticky;
+    top: 0;
+    background: var(--ui-bg);
+    z-index: 5;
+}
+
+h2 {
+    font-family: 'Orbitron';
+    font-size: 12px;
+    color: #888;
+    margin: 15px 0 5px 0;
+    text-transform: uppercase;
+}
+
+.slot-row {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    padding: 8px 12px;
+    margin-bottom: 4px;
+    background: rgba(255,255,255,0.03);
+    border: 1px solid transparent;
+    cursor: pointer;
+    transition: 0.2s;
+}
+.slot-row:hover { background: rgba(255,255,255,0.1); }
+.slot-row.active { background: var(--highlight-dim); border-left: 3px solid var(--highlight); }
+
+.slot-name {
+    text-transform: uppercase;
+    font-size: 11px;
+    font-weight: bold;
+    letter-spacing: 1px;
+}
+
+.current-color-box {
+    width: 30px;
+    height: 18px;
+    border: 1px solid white;
+    box-shadow: inset 0 0 5px rgba(0,0,0,0.8);
+}
+
+/* STYLE DES CHAMPS TEXTE (INPUTS) */
+.item-input-group {
+    margin-bottom: 8px;
+}
+.input-label {
+    font-size: 10px;
+    text-transform: uppercase;
+    color: #aaa;
+    margin-bottom: 2px;
+    display: block;
+}
+.wf-input {
+    width: 100%;
+    background: var(--input-bg);
+    border: none;
+    border-bottom: 1px solid var(--ui-border);
+    color: white;
+    padding: 8px;
+    font-family: 'Roboto', sans-serif;
+    box-sizing: border-box;
+    transition: 0.3s;
+}
+.wf-input:focus {
+    outline: none;
+    border-bottom: 1px solid var(--highlight);
+    background: rgba(255,255,255,0.1);
+}
+
+/* BOUTONS NAVIGATION */
+.btn-nav {
+    margin-top: 15px;
+    padding: 12px;
+    background: transparent;
+    border: 1px solid var(--ui-border);
+    color: var(--text-main);
+    font-family: 'Orbitron';
+    text-transform: uppercase;
+    cursor: pointer;
+    text-align: left;
+    display: flex;
+    justify-content: space-between;
+    transition: 0.3s;
+}
+.btn-nav:hover { background: var(--highlight); color: black; }
+
+.btn-back {
+    background: none;
+    border: none;
+    color: var(--highlight);
+    font-size: 20px;
+    cursor: pointer;
+    padding: 0;
+    display: flex;
+    align-items: center;
+}
+.btn-back:hover { color: white; }
+
+/* --- MENU DROITE (PALETTES) --- */
+.right-panel {
+    width: 320px;
+    margin-right: 50px;
+    background: var(--ui-bg);
+    border: 1px solid var(--ui-border);
+    height: 600px;
+    display: flex;
+    flex-direction: column;
+    transform: translateX(400px);
+    opacity: 0;
+    transition: all 0.4s cubic-bezier(0.16, 1, 0.3, 1);
+    z-index: 10;
+}
+.right-panel.open { transform: translateX(0); opacity: 1; }
+
+.palette-header {
+    padding: 15px;
+    background: rgba(0,0,0,0.3);
+    font-family: 'Orbitron', sans-serif;
+    text-align: center;
+    border-bottom: 1px solid var(--ui-border);
+}
+.palette-tabs {
+    display: flex;
+    overflow-x: auto;
+    background: rgba(0,0,0,0.2);
+    padding: 5px;
+}
+.palette-tabs::-webkit-scrollbar { height: 2px; }
+.palette-tabs::-webkit-scrollbar-thumb { background: var(--highlight); }
+
+.tab-btn {
+    background: none; border: none; color: #888; padding: 10px 15px;
+    cursor: pointer; font-family: 'Orbitron', sans-serif; font-size: 11px; white-space: nowrap;
+}
+.tab-btn:hover { color: white; }
+.tab-btn.active { color: var(--highlight); text-shadow: 0 0 5px var(--highlight); }
+
+.color-grid {
+    flex: 1; padding: 10px; display: grid; grid-template-columns: repeat(5, 1fr);
+    grid-auto-rows: 50px; gap: 2px; overflow-y: auto;
+}
+.color-swatch {
+    cursor: pointer; border: 1px solid rgba(0,0,0,0.5); transition: transform 0.1s;
+}
+.color-swatch:hover {
+    transform: scale(1.15); border: 2px solid white; z-index: 2;
+}
+
+.close-btn {
+    padding: 15px; background: rgba(255, 50, 50, 0.2); color: white; border: none;
+    cursor: pointer; font-family: 'Orbitron'; text-transform: uppercase;
+}
+.close-btn:hover { background: rgba(255, 50, 50, 0.4); }

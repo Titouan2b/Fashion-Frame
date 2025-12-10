@@ -1,0 +1,178 @@
+<!DOCTYPE html>
+<html lang="fr">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Warframe Arsenal - Ultimate</title>
+    <link href="https://fonts.googleapis.com/css2?family=Orbitron:wght@400;700&family=Roboto:wght@300;400&display=swap" rel="stylesheet">
+    <link href="../Fashion Frame/index.css">
+</head>
+<body>
+    <div class="fog"></div>
+
+    <!-- GAUCHE : SYSTEME DE NAVIGATION -->
+    <div class="left-panel-container" id="leftContainer">
+        
+        <!-- --- MENU 1 : WARFRAME --- -->
+        <div class="menu-layer" id="main-menu">
+            <h1>Apparence</h1>
+            
+            <div class="slot-row" onclick="openPalettePicker('wf-primary', this)">
+                <span class="slot-name">Principale</span>
+                <div class="current-color-box" id="box-wf-primary" style="background-color: #5c5c5c;"></div>
+            </div>
+            <div class="slot-row" onclick="openPalettePicker('wf-secondary', this)">
+                <span class="slot-name">Secondaire</span>
+                <div class="current-color-box" id="box-wf-secondary" style="background-color: #8f8f8f;"></div>
+            </div>
+            <div class="slot-row" onclick="openPalettePicker('wf-tertiary', this)">
+                <span class="slot-name">Tertiaire</span>
+                <div class="current-color-box" id="box-wf-tertiary" style="background-color: #333333;"></div>
+            </div>
+            <div class="slot-row" onclick="openPalettePicker('wf-accents', this)">
+                <span class="slot-name">Accents</span>
+                <div class="current-color-box" id="box-wf-accents" style="background-color: #d4af37;"></div>
+            </div>
+            <div class="slot-row" onclick="openPalettePicker('wf-emissive', this)">
+                <span class="slot-name">Émission</span>
+                <div class="current-color-box" id="box-wf-emissive" style="background-color: #ffaa00;"></div>
+            </div>
+            <div class="slot-row" onclick="openPalettePicker('wf-energy', this)">
+                <span class="slot-name">Énergie</span>
+                <div class="current-color-box" id="box-wf-energy" style="background-color: #00e5ff;"></div>
+            </div>
+
+            <button class="btn-nav" onclick="navTo('accessories')">
+                <span>Accessoires</span> <span>▶</span>
+            </button>
+        </div>
+
+        <!-- --- MENU 2 : ACCESSOIRES (LISTE) --- -->
+        <div class="menu-layer" id="accessories-menu">
+            <h1>
+                <button class="btn-back" onclick="navTo('main')">◀</button>
+                Attachements
+            </h1>
+
+            <!-- Liste des Items (Inputs) -->
+            <div class="item-input-group">
+                <span class="input-label">Torse</span>
+                <input type="text" class="wf-input" placeholder="Aucun">
+            </div>
+            <div class="item-input-group">
+                <span class="input-label">Bras Gauche</span>
+                <input type="text" class="wf-input" placeholder="Aucun">
+            </div>
+            <div class="item-input-group">
+                <span class="input-label">Bras Droit</span>
+                <input type="text" class="wf-input" placeholder="Aucun">
+            </div>
+            <div class="item-input-group">
+                <span class="input-label">Jambe Gauche</span>
+                <input type="text" class="wf-input" placeholder="Aucun">
+            </div>
+            <div class="item-input-group">
+                <span class="input-label">Jambe Droite</span>
+                <input type="text" class="wf-input" placeholder="Aucun">
+            </div>
+            <div class="item-input-group">
+                <span class="input-label">Auxiliaire</span>
+                <input type="text" class="wf-input" placeholder="Aucun">
+            </div>
+            <div class="item-input-group">
+                <span class="input-label">Ephemera</span>
+                <input type="text" class="wf-input" placeholder="Aucun">
+            </div>
+            <div class="item-input-group">
+                <span class="input-label">Signa</span>
+                <input type="text" class="wf-input" placeholder="Aucun">
+            </div>
+
+            <!-- Couleurs des Attachements -->
+            <h2>Couleurs Attachements</h2>
+            <div class="slot-row" onclick="openPalettePicker('acc-primary', this)">
+                <span class="slot-name">Principale</span>
+                <div class="current-color-box" id="box-acc-primary" style="background-color: #222;"></div>
+            </div>
+            <div class="slot-row" onclick="openPalettePicker('acc-secondary', this)">
+                <span class="slot-name">Secondaire</span>
+                <div class="current-color-box" id="box-acc-secondary" style="background-color: #444;"></div>
+            </div>
+            <div class="slot-row" onclick="openPalettePicker('acc-tertiary', this)">
+                <span class="slot-name">Tertiaire</span>
+                <div class="current-color-box" id="box-acc-tertiary" style="background-color: #333;"></div>
+            </div>
+            <div class="slot-row" onclick="openPalettePicker('acc-accents', this)">
+                <span class="slot-name">Accents</span>
+                <div class="current-color-box" id="box-acc-accents" style="background-color: #d4af37;"></div>
+            </div>
+            <div class="slot-row" onclick="openPalettePicker('acc-emissive', this)">
+                <span class="slot-name">Émission</span>
+                <div class="current-color-box" id="box-acc-emissive" style="background-color: #00ff00;"></div>
+            </div>
+            <div class="slot-row" onclick="openPalettePicker('acc-energy', this)">
+                <span class="slot-name">Énergie</span>
+                <div class="current-color-box" id="box-acc-energy" style="background-color: #00e5ff;"></div>
+            </div>
+
+            <!-- Bouton vers SYANDANA -->
+            <button class="btn-nav" onclick="navTo('syandana')">
+                <span>Syandana</span> <span>▶</span>
+            </button>
+        </div>
+
+        <!-- --- MENU 3 : SYANDANA --- -->
+        <div class="menu-layer" id="syandana-menu">
+            <h1>
+                <button class="btn-back" onclick="navTo('accessories')">◀</button>
+                Syandana
+            </h1>
+
+            <div class="item-input-group">
+                <span class="input-label">Item</span>
+                <input type="text" class="wf-input" placeholder="Nom de la Syandana...">
+            </div>
+
+            <h2>Couleurs Syandana</h2>
+            <div class="slot-row" onclick="openPalettePicker('syn-primary', this)">
+                <span class="slot-name">Principale</span>
+                <div class="current-color-box" id="box-syn-primary" style="background-color: #444;"></div>
+            </div>
+            <div class="slot-row" onclick="openPalettePicker('syn-secondary', this)">
+                <span class="slot-name">Secondaire</span>
+                <div class="current-color-box" id="box-syn-secondary" style="background-color: #666;"></div>
+            </div>
+            <div class="slot-row" onclick="openPalettePicker('syn-tertiary', this)">
+                <span class="slot-name">Tertiaire</span>
+                <div class="current-color-box" id="box-syn-tertiary" style="background-color: #222;"></div>
+            </div>
+            <div class="slot-row" onclick="openPalettePicker('syn-accents', this)">
+                <span class="slot-name">Accents</span>
+                <div class="current-color-box" id="box-syn-accents" style="background-color: #d4af37;"></div>
+            </div>
+            <div class="slot-row" onclick="openPalettePicker('syn-emissive', this)">
+                <span class="slot-name">Émission</span>
+                <div class="current-color-box" id="box-syn-emissive" style="background-color: #ff5500;"></div>
+            </div>
+            <div class="slot-row" onclick="openPalettePicker('syn-energy', this)">
+                <span class="slot-name">Énergie</span>
+                <div class="current-color-box" id="box-syn-energy" style="background-color: #00e5ff;"></div>
+            </div>
+        </div>
+    </div>
+
+    <!-- CENTRE -->
+    <div class="preview-area">
+        <img src="https://content.warframe.com/PublicExport/Manifest/ExportWarframesImages/ExcaliburPrime.png" alt="Warframe" class="warframe-img" id="mainImage">
+        <div class="energy-glow" id="energyGlow"></div>
+    </div>
+
+    <!-- DROITE : PALETTES -->
+    <div class="right-panel" id="palettePanel">
+        <div class="palette-header">CHOIX DE COULEUR</div>
+        <div class="palette-tabs" id="paletteTabs"></div>
+        <div class="color-grid" id="colorGrid"></div>
+        <button class="close-btn" onclick="closePalette()">Confirmer</button>
+    </div>
+    <link href="./index.js">
+</body>
