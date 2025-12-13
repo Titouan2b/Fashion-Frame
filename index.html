@@ -8,263 +8,154 @@
     <link href="./index.css" rel="stylesheet">
 </head>
 <body>
-
     <div class="fog"></div>
     <div id="flashMsg" class="flash-msg">CONFIGURATION SAUVEGARDÉE</div>
 
-    <!-- GAUCHE : NAVIGATION -->
-    <div class="left-panel-container" id="leftContainer">
-        
-        <!-- MENU 1: WARFRAME -->
-        <div class="menu-layer" id="main-menu">
-            <h1>Apparence</h1>
-            
-            <div class="item-input-group">
-                <span class="input-label">Aspect (Skin)</span>
-                <input type="text" id="input-aspect" class="wf-input" placeholder="Aucun">
-            </div>
-            <div class="item-input-group">
-                <span class="input-label">Casque</span>
-                <input type="text" id="input-helm" class="wf-input" placeholder="Aucun">
-            </div>
-            <div class="item-input-group">
-                <span class="input-label">Animation</span>
-                <input type="text" id="input-animation" class="wf-input" placeholder="Aucun">
-            </div>
+    <!-- INPUT FICHIER CACHÉ -->
+    <input type="file" id="imageInput" accept="image/*" style="display: none;" onchange="handleImageUpload(this)">
 
-            <h2>Couleurs</h2>
-            <div class="slot-row" onclick="openPalettePicker('wf-primary', this)">
-                <span class="slot-name">Principale</span>
-                <div class="current-color-box" id="box-wf-primary"></div>
-            </div>
-            <div class="slot-row" onclick="openPalettePicker('wf-secondary', this)">
-                <span class="slot-name">Secondaire</span>
-                <div class="current-color-box" id="box-wf-secondary"></div>
-            </div>
-            <div class="slot-row" onclick="openPalettePicker('wf-tertiary', this)">
-                <span class="slot-name">Tertiaire</span>
-                <div class="current-color-box" id="box-wf-tertiary"></div>
-            </div>
-            <div class="slot-row" onclick="openPalettePicker('wf-accents', this)">
-                <span class="slot-name">Accents</span>
-                <div class="current-color-box" id="box-wf-accents"></div>
-            </div>
-
-            <div class="slot-row">
-                <span class="slot-name">Émission</span>
-                <div class="dual-colors">
-                    <div class="current-color-box" id="box-wf-emissive-1" onclick="openPalettePicker('wf-emissive-1', this)"></div>
-                    <div class="current-color-box" id="box-wf-emissive-2" onclick="openPalettePicker('wf-emissive-2', this)"></div>
-                </div>
-            </div>
-            <div class="slot-row">
-                <span class="slot-name">Énergie</span>
-                <div class="dual-colors">
-                    <div class="current-color-box" id="box-wf-energy-1" onclick="openPalettePicker('wf-energy-1', this)"></div>
-                    <div class="current-color-box" id="box-wf-energy-2" onclick="openPalettePicker('wf-energy-2', this)"></div>
-                </div>
-            </div>
-
-            <button class="btn-nav" onclick="navTo('accessories')">
-                <span>Accessoires</span> <span>▶</span>
+    <!-- ECRAN D'ACCUEIL -->
+    <div id="landing-page">
+        <div class="landing-title">Arsenal Companion</div>
+        <div class="landing-buttons">
+            <button class="choice-btn" onclick="startApp('warframe')">
+                <span class="choice-icon">◈</span> Warframe
             </button>
-            <button class="btn-nav" onclick="navTo('syandana')">
-                <span>Syandana</span> <span>▶</span>
-            </button>
-            <button class="btn-nav" onclick="navTo('regalia')">
-                <span>Sceau</span> <span>▶</span>
+            <button class="choice-btn" onclick="startApp('operator')">
+                <span class="choice-icon">웃</span> Opérateur
             </button>
         </div>
-
-        <!-- MENU 2: ACCESSOIRES -->
-        <div class="menu-layer" id="accessories-menu">
-            <h1><button class="btn-back" onclick="navTo('main')">◀</button> Attachements</h1>
-
-            <div class="item-input-group">
-                <span class="input-label">Torse</span>
-                <input type="text" id="input-torso" class="wf-input" placeholder="Aucun">
-            </div>
-            <div class="item-input-group">
-                <span class="input-label">Bras Gauche</span>
-                <input type="text" id="input-larm" class="wf-input" placeholder="Aucun">
-            </div>
-            <div class="item-input-group">
-                <span class="input-label">Bras Droit</span>
-                <input type="text" id="input-rarm" class="wf-input" placeholder="Aucun">
-            </div>
-            <div class="item-input-group">
-                <span class="input-label">Jambe Gauche</span>
-                <input type="text" id="input-lleg" class="wf-input" placeholder="Aucun">
-            </div>
-            <div class="item-input-group">
-                <span class="input-label">Jambe Droite</span>
-                <input type="text" id="input-rleg" class="wf-input" placeholder="Aucun">
-            </div>
-            <div class="item-input-group">
-                <span class="input-label">Auxiliaire</span>
-                <input type="text" id="input-aux" class="wf-input" placeholder="Aucun">
-            </div>
-            <div class="item-input-group">
-                <span class="input-label">Ephemera</span>
-                <input type="text" id="input-ephemera" class="wf-input" placeholder="Aucun">
-            </div>
-            <div class="item-input-group">
-                <span class="input-label">Signa</span>
-                <input type="text" id="input-signa" class="wf-input" placeholder="Aucun">
-            </div>
-
-            <h2>Couleurs Attachements</h2>
-            <div class="slot-row" onclick="openPalettePicker('acc-primary', this)">
-                <span class="slot-name">Principale</span>
-                <div class="current-color-box" id="box-acc-primary"></div>
-            </div>
-            <div class="slot-row" onclick="openPalettePicker('acc-secondary', this)">
-                <span class="slot-name">Secondaire</span>
-                <div class="current-color-box" id="box-acc-secondary"></div>
-            </div>
-            <div class="slot-row" onclick="openPalettePicker('acc-tertiary', this)">
-                <span class="slot-name">Tertiaire</span>
-                <div class="current-color-box" id="box-acc-tertiary"></div>
-            </div>
-            <div class="slot-row" onclick="openPalettePicker('acc-accents', this)">
-                <span class="slot-name">Accents</span>
-                <div class="current-color-box" id="box-acc-accents"></div>
-            </div>
-            
-            <div class="slot-row">
-                <span class="slot-name">Émission</span>
-                <div class="dual-colors">
-                    <div class="current-color-box" id="box-acc-emissive-1" onclick="openPalettePicker('acc-emissive-1', this)"></div>
-                    <div class="current-color-box" id="box-acc-emissive-2" onclick="openPalettePicker('acc-emissive-2', this)"></div>
-                </div>
-            </div>
-            <div class="slot-row">
-                <span class="slot-name">Énergie</span>
-                <div class="dual-colors">
-                    <div class="current-color-box" id="box-acc-energy-1" onclick="openPalettePicker('acc-energy-1', this)"></div>
-                    <div class="current-color-box" id="box-acc-energy-2" onclick="openPalettePicker('acc-energy-2', this)"></div>
-                </div>
-            </div>
-        </div>
-
-        <!-- MENU 3: SYANDANA -->
-        <div class="menu-layer" id="syandana-menu">
-            <h1><button class="btn-back" onclick="navTo('main')">◀</button> Syandana</h1>
-
-            <div class="item-input-group">
-                <span class="input-label">Item</span>
-                <input type="text" id="input-syandana" class="wf-input" placeholder="Nom de la Syandana...">
-            </div>
-
-            <h2>Couleurs Syandana</h2>
-            <div class="slot-row" onclick="openPalettePicker('syn-primary', this)">
-                <span class="slot-name">Principale</span>
-                <div class="current-color-box" id="box-syn-primary"></div>
-            </div>
-            <div class="slot-row" onclick="openPalettePicker('syn-secondary', this)">
-                <span class="slot-name">Secondaire</span>
-                <div class="current-color-box" id="box-syn-secondary"></div>
-            </div>
-            <div class="slot-row" onclick="openPalettePicker('syn-tertiary', this)">
-                <span class="slot-name">Tertiaire</span>
-                <div class="current-color-box" id="box-syn-tertiary"></div>
-            </div>
-            <div class="slot-row" onclick="openPalettePicker('syn-accents', this)">
-                <span class="slot-name">Accents</span>
-                <div class="current-color-box" id="box-syn-accents"></div>
-            </div>
-            <div class="slot-row">
-                <span class="slot-name">Émission</span>
-                <div class="dual-colors">
-                    <div class="current-color-box" id="box-syn-emissive-1" onclick="openPalettePicker('syn-emissive-1', this)"></div>
-                    <div class="current-color-box" id="box-syn-emissive-2" onclick="openPalettePicker('syn-emissive-2', this)"></div>
-                </div>
-            </div>
-            <div class="slot-row">
-                <span class="slot-name">Énergie</span>
-                <div class="dual-colors">
-                    <div class="current-color-box" id="box-syn-energy-1" onclick="openPalettePicker('syn-energy-1', this)"></div>
-                    <div class="current-color-box" id="box-syn-energy-2" onclick="openPalettePicker('syn-energy-2', this)"></div>
-                </div>
-            </div>
-        </div>
-
-        <!-- MENU 4: SCEAU (REGALIA) -->
-        <div class="menu-layer" id="regalia-menu">
-            <h1><button class="btn-back" onclick="navTo('main')">◀</button> Sceau</h1>
-
-            <!-- Entrées de texte -->
-            <div class="item-input-group">
-                <span class="input-label">Badge Gauche</span>
-                <input type="text" id="input-badge-l" class="wf-input" placeholder="Aucun">
-            </div>
-            <div class="item-input-group">
-                <span class="input-label">Badge Droite</span>
-                <input type="text" id="input-badge-r" class="wf-input" placeholder="Aucun">
-            </div>
-            <div class="item-input-group">
-                <span class="input-label">Sceau Frontal</span>
-                <input type="text" id="input-sigil-f" class="wf-input" placeholder="Aucun">
-            </div>
-            <div class="item-input-group">
-                <span class="input-label">Sceau Dorsal</span>
-                <input type="text" id="input-sigil-b" class="wf-input" placeholder="Aucun">
-            </div>
-
-            <h2>Ajustements</h2>
-
-            <!-- 6 Barres (Sliders) -->
-            <div class="slider-group">
-                <span class="slider-label">Orientation</span>
-                <div class="slider-container">
-                    <input type="range" id="input-regalia-slider-1" min="0" max="1" step="0.01" value="0.5" oninput="updateSliderVal(this)">
-                    <span class="slider-value">0.50</span>
-                </div>
-            </div>
-            <div class="slider-group">
-                <span class="slider-label">Hauteur</span>
-                <div class="slider-container">
-                    <input type="range" id="input-regalia-slider-2" min="0" max="1" step="0.01" value="0.5" oninput="updateSliderVal(this)">
-                    <span class="slider-value">0.50</span>
-                </div>
-            </div>
-            <div class="slider-group">
-                <span class="slider-label">Largeur</span>
-                <div class="slider-container">
-                    <input type="range" id="input-regalia-slider-3" min="0" max="1" step="0.01" value="0.5" oninput="updateSliderVal(this)">
-                    <span class="slider-value">0.50</span>
-                </div>
-            </div>
-            <div class="slider-group">
-                <span class="slider-label">Décalage Axe X</span>
-                <div class="slider-container">
-                    <input type="range" id="input-regalia-slider-4" min="0" max="1" step="0.01" value="0.5" oninput="updateSliderVal(this)">
-                    <span class="slider-value">0.50</span>
-                </div>
-            </div>
-            <div class="slider-group">
-                <span class="slider-label">Décalage Axe Y</span>
-                <div class="slider-container">
-                    <input type="range" id="input-regalia-slider-5" min="0" max="1" step="0.01" value="0.5" oninput="updateSliderVal(this)">
-                    <span class="slider-value">0.50</span>
-                </div>
-            </div>
-            <div class="slider-group">
-                <span class="slider-label">Opacité</span>
-                <div class="slider-container">
-                    <input type="range" id="input-regalia-slider-6" min="0" max="1" step="0.01" value="0.5" oninput="updateSliderVal(this)">
-                    <span class="slider-value">0.50</span>
-                </div>
-            </div>
-
-        </div>
-
     </div>
 
-    <!-- CENTRE : IMAGE -->
-    <div class="preview-area">
-        <img src="./img/Uriel.gif" alt="Warframe" class="warframe-img" id="mainImage">
-        <div class="energy-glow" id="energyGlow"></div>
+    <!-- MODALE DE CHARGEMENT -->
+    <div id="load-modal">
+        <div class="load-content">
+            <h1>Charger Configuration</h1>
+            <div id="saves-list"></div>
+            <button class="btn-system" style="margin-top:20px; width:100%" onclick="closeLoadModal()">Annuler</button>
+        </div>
+    </div>
+
+    <!-- =============================================
+         INTERFACE WARFRAME
+         ============================================= -->
+    <div id="app-warframe" class="app-container">
+        <div class="left-panel-container" id="left-panel-wf">
+            <div class="menu-layer active-layer" id="menu-wf-main">
+                <h1>Apparence (WF)</h1>
+                <div class="item-input-group"><span class="input-label">Aspect</span><input type="text" id="wf-input-aspect" class="wf-input"></div>
+                <div class="item-input-group"><span class="input-label">Casque</span><input type="text" id="wf-input-helm" class="wf-input"></div>
+                <div class="item-input-group"><span class="input-label">Animation</span><input type="text" id="wf-input-anim" class="wf-input"></div>
+                <h2>Couleurs</h2>
+                <div class="slot-row" onclick="openPalette('wf-primary', this)"><span class="slot-name">Principale</span><div class="current-color-box" id="box-wf-primary"></div></div>
+                <div class="slot-row" onclick="openPalette('wf-secondary', this)"><span class="slot-name">Secondaire</span><div class="current-color-box" id="box-wf-secondary"></div></div>
+                <div class="slot-row" onclick="openPalette('wf-tertiary', this)"><span class="slot-name">Tertiaire</span><div class="current-color-box" id="box-wf-tertiary"></div></div>
+                <div class="slot-row" onclick="openPalette('wf-accents', this)"><span class="slot-name">Accents</span><div class="current-color-box" id="box-wf-accents"></div></div>
+                <div class="slot-row"><span class="slot-name">Émission</span><div class="dual-colors"><div class="current-color-box" id="box-wf-emissive-1" onclick="openPalette('wf-emissive-1', this)"></div><div class="current-color-box" id="box-wf-emissive-2" onclick="openPalette('wf-emissive-2', this)"></div></div></div>
+                <div class="slot-row"><span class="slot-name">Énergie</span><div class="dual-colors"><div class="current-color-box" id="box-wf-energy-1" onclick="openPalette('wf-energy-1', this)"></div><div class="current-color-box" id="box-wf-energy-2" onclick="openPalette('wf-energy-2', this)"></div></div></div>
+                <button class="btn-nav" onclick="navTo('wf-accessories')"><span>Accessoires</span><span>▶</span></button>
+                <button class="btn-nav" onclick="navTo('wf-syandana')"><span>Syandana</span><span>▶</span></button>
+                <button class="btn-nav" onclick="navTo('wf-regalia')"><span>Sceau</span><span>▶</span></button>
+            </div>
+            <!-- Sous-menus WF (inchangés, juste recopiés pour structure) -->
+            <div class="menu-layer" id="menu-wf-accessories">
+                <h1><button class="btn-back" onclick="navTo('wf-main')">◀</button> Attachements</h1>
+                <div class="item-input-group"><span class="input-label">Torse</span><input type="text" id="wf-acc-chest" class="wf-input"></div>
+                <div class="item-input-group"><span class="input-label">Bras G.</span><input type="text" id="wf-acc-larm" class="wf-input"></div>
+                <div class="item-input-group"><span class="input-label">Bras D.</span><input type="text" id="wf-acc-rarm" class="wf-input"></div>
+                <div class="item-input-group"><span class="input-label">Jambe G.</span><input type="text" id="wf-acc-lleg" class="wf-input"></div>
+                <div class="item-input-group"><span class="input-label">Jambe D.</span><input type="text" id="wf-acc-rleg" class="wf-input"></div>
+                <div class="item-input-group"><span class="input-label">Auxiliaire</span><input type="text" id="wf-acc-aux" class="wf-input"></div>
+                <div class="item-input-group"><span class="input-label">Ephemera</span><input type="text" id="wf-acc-eph" class="wf-input"></div>
+                <h2>Couleurs</h2>
+                <div class="slot-row" onclick="openPalette('wf-acc-primary', this)"><span class="slot-name">Principale</span><div class="current-color-box" id="box-wf-acc-primary"></div></div>
+                <div class="slot-row" onclick="openPalette('wf-acc-secondary', this)"><span class="slot-name">Secondaire</span><div class="current-color-box" id="box-wf-acc-secondary"></div></div>
+                <div class="slot-row" onclick="openPalette('wf-acc-tertiary', this)"><span class="slot-name">Tertiaire</span><div class="current-color-box" id="box-wf-acc-tertiary"></div></div>
+                <div class="slot-row" onclick="openPalette('wf-acc-accents', this)"><span class="slot-name">Accents</span><div class="current-color-box" id="box-wf-acc-accents"></div></div>
+                <div class="slot-row"><span class="slot-name">Émission</span><div class="dual-colors"><div class="current-color-box" id="box-wf-acc-emissive-1" onclick="openPalette('wf-acc-emissive-1', this)"></div><div class="current-color-box" id="box-wf-acc-emissive-2" onclick="openPalette('wf-acc-emissive-2', this)"></div></div></div>
+                <div class="slot-row"><span class="slot-name">Énergie</span><div class="dual-colors"><div class="current-color-box" id="box-wf-acc-energy-1" onclick="openPalette('wf-acc-energy-1', this)"></div><div class="current-color-box" id="box-wf-acc-energy-2" onclick="openPalette('wf-acc-energy-2', this)"></div></div></div>
+            </div>
+            <div class="menu-layer" id="menu-wf-syandana">
+                <h1><button class="btn-back" onclick="navTo('wf-main')">◀</button> Syandana</h1>
+                <div class="item-input-group"><span class="input-label">Item</span><input type="text" id="wf-syn-item" class="wf-input"></div>
+                <h2>Couleurs</h2>
+                <div class="slot-row" onclick="openPalette('wf-syn-primary', this)"><span class="slot-name">Principale</span><div class="current-color-box" id="box-wf-syn-primary"></div></div>
+                <div class="slot-row" onclick="openPalette('wf-syn-secondary', this)"><span class="slot-name">Secondaire</span><div class="current-color-box" id="box-wf-syn-secondary"></div></div>
+                <div class="slot-row" onclick="openPalette('wf-syn-tertiary', this)"><span class="slot-name">Tertiaire</span><div class="current-color-box" id="box-wf-syn-tertiary"></div></div>
+                <div class="slot-row" onclick="openPalette('wf-syn-accents', this)"><span class="slot-name">Accents</span><div class="current-color-box" id="box-wf-syn-accents"></div></div>
+                <div class="slot-row"><span class="slot-name">Émission</span><div class="dual-colors"><div class="current-color-box" id="box-wf-syn-emissive-1" onclick="openPalette('wf-syn-emissive-1', this)"></div><div class="current-color-box" id="box-wf-syn-emissive-2" onclick="openPalette('wf-syn-emissive-2', this)"></div></div></div>
+                <div class="slot-row"><span class="slot-name">Énergie</span><div class="dual-colors"><div class="current-color-box" id="box-wf-syn-energy-1" onclick="openPalette('wf-syn-energy-1', this)"></div><div class="current-color-box" id="box-wf-syn-energy-2" onclick="openPalette('wf-syn-energy-2', this)"></div></div></div>
+            </div>
+            <div class="menu-layer" id="menu-wf-regalia">
+                <h1><button class="btn-back" onclick="navTo('wf-main')">◀</button> Sceau</h1>
+                <div class="item-input-group"><span class="input-label">Badge G.</span><input type="text" id="wf-reg-badge-l" class="wf-input"></div>
+                <div class="item-input-group"><span class="input-label">Badge D.</span><input type="text" id="wf-reg-badge-r" class="wf-input"></div>
+                <div class="item-input-group"><span class="input-label">Frontal</span><input type="text" id="wf-reg-sigil-f" class="wf-input"></div>
+                <div class="item-input-group"><span class="input-label">Dorsal</span><input type="text" id="wf-reg-sigil-b" class="wf-input"></div>
+                <h2>Ajustements</h2>
+                <div class="slider-group"><span class="slider-label">Rot</span><div class="slider-container"><input type="range" id="wf-sl-1" min="0" max="1" step="0.01" value="0.5" oninput="updateVal(this)"><span class="slider-value">0.50</span></div></div>
+                <div class="slider-group"><span class="slider-label">Larg</span><div class="slider-container"><input type="range" id="wf-sl-2" min="0" max="1" step="0.01" value="0.5" oninput="updateVal(this)"><span class="slider-value">0.50</span></div></div>
+            </div>
+        </div>
+        <div class="preview-area">
+            <img src="https://content.warframe.com/PublicExport/Manifest/ExportWarframesImages/ExcaliburPrime.png" alt="Warframe" class="warframe-img" id="img-wf">
+            <div class="energy-glow" id="glow-wf"></div>
+            <button class="img-upload-btn" onclick="triggerUpload()">Changer Image</button>
+        </div>
+    </div>
+
+    <!-- =============================================
+         INTERFACE OPERATEUR
+         ============================================= -->
+    <div id="app-operator" class="app-container">
+        <div class="left-panel-container" id="left-panel-op">
+            <div class="menu-layer active-layer" id="menu-op-main">
+                <h1>Apparence (OP)</h1>
+                <button class="btn-nav" onclick="navTo('op-clothing')"><span>Habillement</span><span>▶</span></button>
+                <button class="btn-nav" onclick="navTo('op-traits')"><span>Traits</span><span>▶</span></button>
+            </div>
+            <!-- Sous-menus OP (inchangés) -->
+            <div class="menu-layer" id="menu-op-clothing">
+                <h1><button class="btn-back" onclick="navTo('op-main')">◀</button> Habillement</h1>
+                <button class="btn-nav" onclick="navTo('op-face-acc')"><span>Access. Faciaux</span><span>▶</span></button>
+                <button class="btn-nav" onclick="navTo('op-suit')"><span>Combinaison</span><span>▶</span></button>
+                <button class="btn-nav" onclick="navTo('op-regalia')"><span>Sceau</span><span>▶</span></button>
+                <button class="btn-nav" onclick="navTo('op-anim')"><span>Animation</span><span>▶</span></button>
+                <button class="btn-nav" onclick="navTo('op-attachments')"><span>Accessoires</span><span>▶</span></button>
+                <button class="btn-nav" onclick="navTo('op-syandana')"><span>Syandana</span><span>▶</span></button>
+            </div>
+            <div class="menu-layer" id="menu-op-traits">
+                <h1><button class="btn-back" onclick="navTo('op-main')">◀</button> Traits</h1>
+                <button class="btn-nav" onclick="navTo('op-trait-body')"><span>Tête et Corps</span><span>▶</span></button>
+                <button class="btn-nav" onclick="navTo('op-trait-eyes')"><span>Yeux</span><span>▶</span></button>
+                <button class="btn-nav" onclick="navTo('op-trait-makeup')"><span>Maquillage</span><span>▶</span></button>
+                <button class="btn-nav" onclick="navTo('op-trait-brows')"><span>Sourcils</span><span>▶</span></button>
+                <button class="btn-nav" onclick="navTo('op-trait-hair')"><span>Cheveux/Barbe</span><span>▶</span></button>
+                <button class="btn-nav" onclick="navTo('op-trait-tattoo')"><span>Tatouage Facial</span><span>▶</span></button>
+                <button class="btn-nav" onclick="navTo('op-trait-voice')"><span>Voix</span><span>▶</span></button>
+            </div>
+            <!-- ... (Tous les sous-menus OP de la version précédente sont inclus ici via JS logic mais HTML doit être là) ... -->
+            <!-- Pour gagner de la place, je mets les ID nécessaires au bon fonctionnement -->
+            <div class="menu-layer" id="menu-op-face-acc"><h1><button class="btn-back" onclick="navTo('op-clothing')">◀</button> Acc. Faciaux</h1><div class="item-input-group"><span class="input-label">Access. Visage</span><input type="text" id="op-acc-face" class="wf-input"></div><div class="item-input-group"><span class="input-label">Access. Oreille</span><input type="text" id="op-acc-ear" class="wf-input"></div></div>
+            <div class="menu-layer" id="menu-op-suit"><h1><button class="btn-back" onclick="navTo('op-clothing')">◀</button> Combinaison</h1><div class="item-input-group"><span class="input-label">Combinaison</span><input type="text" id="op-input-suit" class="wf-input"></div><div class="slot-row" onclick="openPalette('op-primary', this)"><span class="slot-name">Doublure 1</span><div class="current-color-box" id="box-op-primary"></div></div></div>
+            <div class="menu-layer" id="menu-op-regalia"><h1><button class="btn-back" onclick="navTo('op-clothing')">◀</button> Sceau</h1><div class="item-input-group"><span class="input-label">Sceau</span><input type="text" id="op-reg-sigil-f" class="wf-input"></div></div>
+            <div class="menu-layer" id="menu-op-anim"><h1><button class="btn-back" onclick="navTo('op-clothing')">◀</button> Animation</h1><div class="item-input-group"><span class="input-label">Anim</span><input type="text" id="op-input-anim" class="wf-input"></div></div>
+            <div class="menu-layer" id="menu-op-attachments"><h1><button class="btn-back" onclick="navTo('op-clothing')">◀</button> Accessoires</h1><div class="item-input-group"><span class="input-label">Ephemera</span><input type="text" id="op-acc-eph" class="wf-input"></div></div>
+            <div class="menu-layer" id="menu-op-syandana"><h1><button class="btn-back" onclick="navTo('op-clothing')">◀</button> Syandana</h1><div class="item-input-group"><span class="input-label">Item</span><input type="text" id="op-syn-item" class="wf-input"></div></div>
+            <!-- Traits -->
+            <div class="menu-layer" id="menu-op-trait-body"><h1><button class="btn-back" onclick="navTo('op-traits')">◀</button> Tête</h1><div class="item-input-group"><span class="input-label">Visage</span><input type="text" id="op-trait-input-body" class="wf-input"></div></div>
+            <div class="menu-layer" id="menu-op-trait-eyes"><h1><button class="btn-back" onclick="navTo('op-traits')">◀</button> Yeux</h1><div class="slot-row"><span class="slot-name">Yeux</span><div class="dual-colors"><div class="current-color-box" id="box-op-trait-eye-1" onclick="openPalette('op-trait-eye-1', this)"></div></div></div></div>
+            <div class="menu-layer" id="menu-op-trait-makeup"><h1><button class="btn-back" onclick="navTo('op-traits')">◀</button> Maquillage</h1><div class="item-input-group"><span class="input-label">Style</span><input type="text" id="op-trait-input-makeup" class="wf-input"></div></div>
+            <div class="menu-layer" id="menu-op-trait-brows"><h1><button class="btn-back" onclick="navTo('op-traits')">◀</button> Sourcils</h1><div class="item-input-group"><span class="input-label">Style</span><input type="text" id="op-trait-input-brows" class="wf-input"></div></div>
+            <div class="menu-layer" id="menu-op-trait-hair"><h1><button class="btn-back" onclick="navTo('op-traits')">◀</button> Cheveux</h1><div class="item-input-group"><span class="input-label">Style</span><input type="text" id="op-trait-input-hair" class="wf-input"></div></div>
+            <div class="menu-layer" id="menu-op-trait-tattoo"><h1><button class="btn-back" onclick="navTo('op-traits')">◀</button> Tatouage</h1><div class="item-input-group"><span class="input-label">Style</span><input type="text" id="op-trait-input-tattoo" class="wf-input"></div></div>
+            <div class="menu-layer" id="menu-op-trait-voice"><h1><button class="btn-back" onclick="navTo('op-traits')">◀</button> Voix</h1><div class="item-input-group"><span class="input-label">Type</span><input type="text" id="op-trait-input-voice" class="wf-input"></div></div>
+        </div>
+        <div class="preview-area">
+            <img src="https://content.warframe.com/PublicExport/Manifest/ExportWarframesImages/Operator.png" alt="Operateur" class="warframe-img" id="img-op">
+            <div class="energy-glow" id="glow-op"></div>
+            <button class="img-upload-btn" onclick="triggerUpload()">Changer Image</button>
+        </div>
     </div>
 
     <!-- DROITE : PALETTES -->
@@ -275,11 +166,12 @@
         <button class="close-btn" onclick="closePalette()">Confirmer</button>
     </div>
 
-    <!-- SYSTÈME DE SAUVEGARDE -->
+    <!-- SYSTÈME -->
     <div class="system-panel">
-        <button class="btn-system" onclick="saveConfig()">Sauvegarder</button>
-        <button class="btn-system" onclick="loadConfig()">Charger</button>
+        <button class="btn-system" onclick="promptSaveName()">Sauvegarder</button>
+        <button class="btn-system" onclick="openLoadModal()">Charger</button>
         <button class="btn-system" onclick="resetConfig()">Réinitialiser</button>
+        <button class="btn-system" style="border-color:#ff5555;color:#ff5555" onclick="exitToMenu()">Menu Principal</button>
     </div>
     <script src="./index.js"></script>
 </body>

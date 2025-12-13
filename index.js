@@ -7,219 +7,221 @@ const palettes = {
 
 let currentSlotId = null;
 let currentPalette = 'Classique';
+let activeApp = null; 
 
-function navTo(target) {
-    const container = document.getElementById('leftContainer');
-    // On retire toutes les classes d'état
-    container.classList.remove('state-accessories', 'state-syandana', 'state-regalia');
-    
-    if (target === 'accessories') container.classList.add('state-accessories');
-    else if (target === 'syandana') container.classList.add('state-syandana');
-    else if (target === 'regalia') container.classList.add('state-regalia');
-    
+// --- GESTION IMAGE ---
+function triggerUpload() { document.getElementById('imageInput').click(); }
+
+function handleImageUpload(input) {
+    if (input.files && input.files[0]) {
+        const reader = new FileReader();
+        reader.onload = function(e) {
+            const imgId = activeApp === 'warframe' ? 'img-wf' : 'img-op';
+            document.getElementById(imgId).src = e.target.result;
+        }
+        reader.readAsDataURL(input.files[0]);
+    }
+}
+
+// --- NAVIGATION ---
+function startApp(mode) {
+    activeApp = mode;
+    document.getElementById('landing-page').style.opacity = '0';
+    setTimeout(() => {
+        document.getElementById('landing-page').style.display = 'none';
+        document.querySelector('.system-panel').style.display = 'flex';
+    }, 500);
+    document.querySelectorAll('.app-container').forEach(el => el.classList.remove('active'));
+    if (mode === 'warframe') document.getElementById('app-warframe').classList.add('active');
+    else document.getElementById('app-operator').classList.add('active');
+}
+
+function exitToMenu() {
+    activeApp = null;
+    document.getElementById('landing-page').style.display = 'flex';
+    setTimeout(() => document.getElementById('landing-page').style.opacity = '1', 10);
+    document.querySelectorAll('.app-container').forEach(el => el.classList.remove('active'));
+    resetViewClasses();
     closePalette();
 }
 
-// Met à jour l'affichage du chiffre quand on bouge le slider
-function updateSliderVal(input) {
-    // Le span est juste après l'input dans le HTML
-    input.nextElementSibling.innerText = parseFloat(input.value).toFixed(2);
+function resetViewClasses() {
+    document.querySelectorAll('.left-panel-container').forEach(el => { el.className = 'left-panel-container'; });
+    document.querySelectorAll('.menu-layer').forEach(l => { l.removeAttribute('style'); });
 }
 
-function openPalettePicker(slotId, element) {
-    currentSlotId = slotId;
-    if (!slotId.match(/-[12]$/)) {
-         document.querySelectorAll('.slot-row').forEach(el => el.classList.remove('active'));
-         element.classList.add('active');
+function navTo(target) {
+    const panel = document.querySelector('.app-container.active .left-panel-container');
+    if(!panel) return;
+    if (activeApp === 'warframe') { showLayer(panel, 'menu-' + target, 'menu-wf-main'); } 
+    else {
+        if (target === 'op-main') { showLayer(panel, 'menu-op-main'); return; }
+        if (target === 'op-clothing') { showLayer(panel, 'menu-op-clothing', 'menu-op-main'); return; }
+        if (target === 'op-traits') { showLayer(panel, 'menu-op-traits', 'menu-op-main'); return; }
+        if (['op-face-acc', 'op-suit', 'op-regalia', 'op-anim', 'op-attachments', 'op-syandana'].includes(target)) { showLayer(panel, 'menu-' + target, 'menu-op-clothing'); return; }
+        if (target.startsWith('op-trait-')) { showLayer(panel, 'menu-' + target, 'menu-op-traits'); return; }
+        showLayer(panel, 'menu-' + target, 'menu-wf-main');
     }
+    closePalette();
+}
+
+function showLayer(container, targetId, parentId = null) {
+    const layers = container.querySelectorAll('.menu-layer');
+    layers.forEach(l => {
+        if (l.id === targetId) { l.style.transform = 'translateX(0)'; l.style.opacity = '1'; l.style.pointerEvents = 'auto'; } 
+        else if (l.id === parentId) { l.style.transform = 'translateX(-50%)'; l.style.opacity = '0'; l.style.pointerEvents = 'none'; } 
+        else { l.style.transform = 'translateX(100%)'; l.style.opacity = '0'; l.style.pointerEvents = 'none'; }
+    });
+}
+
+function updateVal(input) { input.nextElementSibling.innerText = parseFloat(input.value).toFixed(2); }
+
+function openPalette(slotId, element) {
+    currentSlotId = slotId;
+    if (!slotId.match(/-[12]$/)) { document.querySelectorAll('.slot-row').forEach(el => el.classList.remove('active')); if(element) element.classList.add('active'); }
     document.getElementById('palettePanel').classList.add('open');
     if(event) event.stopPropagation();
 }
-
-function closePalette() {
-    document.getElementById('palettePanel').classList.remove('open');
-    document.querySelectorAll('.slot-row').forEach(el => el.classList.remove('active'));
-}
+function closePalette() { document.getElementById('palettePanel').classList.remove('open'); document.querySelectorAll('.slot-row').forEach(el => el.classList.remove('active')); }
 
 function applyColor(hex) {
     if (!currentSlotId) return;
-    updateColorBox(currentSlotId, hex);
+    const box = document.getElementById(`box-${currentSlotId}`);
+    if (box) { box.style.backgroundColor = hex; box.style.boxShadow = `0 0 10px ${hex}`; box.style.borderColor = 'white'; }
+    const prefix = activeApp === 'warframe' ? 'wf' : 'op';
+    if (currentSlotId.includes(`${prefix}-energy-1`)) document.documentElement.style.setProperty('--energy-1', hex);
+    if (currentSlotId.includes(`${prefix}-energy-2`)) document.documentElement.style.setProperty('--energy-2', hex);
 }
 
-function updateColorBox(slotId, hex) {
-    const box = document.getElementById(`box-${slotId}`);
-    if (box) {
-        box.style.backgroundColor = hex;
-        box.style.boxShadow = `0 0 10px ${hex}`;
-        box.style.borderColor = 'white';
-    }
-    if (slotId === 'wf-energy-1') document.documentElement.style.setProperty('--energy-1', hex);
-    if (slotId === 'wf-energy-2') document.documentElement.style.setProperty('--energy-2', hex);
-    if (slotId === 'wf-primary') document.getElementById('mainImage').style.filter = `drop-shadow(0 0 5px ${hex})`;
-}
-
+// --- INIT ---
 window.onload = () => {
-    renderTabs();
-    renderGrid(currentPalette);
-    if(localStorage.getItem('warframeConfig')) {
-        loadConfig();
-    }
+    renderTabs(); renderGrid(currentPalette);
+    document.querySelector('.system-panel').style.display = 'none';
 };
-
 function renderTabs() {
-    const container = document.getElementById('paletteTabs');
-    container.innerHTML = '';
-    Object.keys(palettes).forEach(name => {
-        const btn = document.createElement('button');
-        btn.className = `tab-btn ${name === currentPalette ? 'active' : ''}`;
-        btn.innerText = name;
-        btn.onclick = () => { currentPalette = name; renderTabs(); renderGrid(name); };
-        container.appendChild(btn);
-    });
+    const container = document.getElementById('paletteTabs'); container.innerHTML = '';
+    Object.keys(palettes).forEach(name => { const btn = document.createElement('button'); btn.className = `tab-btn ${name === currentPalette ? 'active' : ''}`; btn.innerText = name; btn.onclick = () => { currentPalette = name; renderTabs(); renderGrid(name); }; container.appendChild(btn); });
 }
-
 function renderGrid(paletteName) {
-    const container = document.getElementById('colorGrid');
-    container.innerHTML = '';
-    palettes[paletteName].forEach(color => {
-        const div = document.createElement('div');
-        div.className = 'color-swatch';
-        div.style.backgroundColor = color;
-        div.onclick = () => applyColor(color);
-        container.appendChild(div);
-    });
+    const container = document.getElementById('colorGrid'); container.innerHTML = '';
+    palettes[paletteName].forEach(color => { const div = document.createElement('div'); div.className = 'color-swatch'; div.style.backgroundColor = color; div.onclick = () => applyColor(color); container.appendChild(div); });
+}
+function generateGradient(start, end, steps) { let arr = []; for (let i = 0; i < steps; i++) { const int = Math.floor((255 * i) / steps); const h = int.toString(16).padStart(2, '0'); arr.push(`#${h}${h}${h}`); } return arr; }
+
+// --- SAUVEGARDE & CHARGEMENT AVEC NOM ---
+function getActiveElements() {
+    if (!activeApp) return null;
+    const container = document.getElementById(activeApp === 'warframe' ? 'app-warframe' : 'app-operator');
+    return {
+        colors: container.querySelectorAll('.current-color-box'),
+        inputs: container.querySelectorAll('input[type="text"]'),
+        sliders: container.querySelectorAll('input[type="range"]'),
+        img: container.querySelector('.warframe-img')
+    };
 }
 
-function generateGradient(start, end, steps) {
-    let arr = [];
-    for (let i = 0; i < steps; i++) {
-        const int = Math.floor((255 * i) / steps);
-        const h = int.toString(16).padStart(2, '0');
-        arr.push(`#${h}${h}${h}`);
+function promptSaveName() {
+    const name = prompt("Nom de la configuration (ex: Volt Prime Gold):");
+    if(name) saveNamedConfig(name);
+}
+
+function saveNamedConfig(name) {
+    if (!activeApp) return;
+    const els = getActiveElements();
+    const config = { colors: {}, texts: {}, sliders: {}, img: null };
+    els.colors.forEach(el => config.colors[el.id] = el.style.backgroundColor);
+    els.inputs.forEach(el => config.texts[el.id] = el.value);
+    els.sliders.forEach(el => config.sliders[el.id] = el.value);
+    // Sauvegarde de l'image (si possible)
+    try { config.img = els.img.src; } catch(e) { console.log("Image non sauvegardée (CORS/Taille)"); }
+
+    const key = `${activeApp}_save_${name}`;
+    try {
+        localStorage.setItem(key, JSON.stringify(config));
+        showFlash(`SAUVEGARDÉ : ${name}`);
+    } catch (e) {
+        alert("Erreur: Image trop lourde ou stockage plein.");
     }
-    return arr;
 }
 
-// --- GESTION DES DONNEES ---
-const colorSlots = [
-    'wf-primary', 'wf-secondary', 'wf-tertiary', 'wf-accents', 
-    'wf-emissive-1', 'wf-emissive-2', 'wf-energy-1', 'wf-energy-2',
-    'acc-primary', 'acc-secondary', 'acc-tertiary', 'acc-accents',
-    'acc-emissive-1', 'acc-emissive-2', 'acc-energy-1', 'acc-energy-2',
-    'syn-primary', 'syn-secondary', 'syn-tertiary', 'syn-accents',
-    'syn-emissive-1', 'syn-emissive-2', 'syn-energy-1', 'syn-energy-2'
-];
-
-const textInputs = [
-    'input-aspect', 'input-helm', 'input-animation',
-    'input-torso', 'input-larm', 'input-rarm', 'input-lleg', 'input-rleg', 
-    'input-aux', 'input-ephemera', 'input-signa', 'input-syandana',
-    'input-badge-l', 'input-badge-r', 'input-sigil-f', 'input-sigil-b'
-];
-
-// Nouveaux inputs pour les sliders
-const sliderInputs = [
-    'input-regalia-slider-1', 'input-regalia-slider-2', 'input-regalia-slider-3',
-    'input-regalia-slider-4', 'input-regalia-slider-5', 'input-regalia-slider-6'
-];
-
-function saveConfig() {
-    const config = { colors: {}, texts: {}, sliders: {} };
+function openLoadModal() {
+    const list = document.getElementById('saves-list');
+    list.innerHTML = '';
+    const prefix = `${activeApp}_save_`;
     
-    colorSlots.forEach(id => {
-        const box = document.getElementById(`box-${id}`);
-        config.colors[id] = box.style.backgroundColor; 
-    });
-    
-    textInputs.forEach(id => {
-        const input = document.getElementById(id);
-        config.texts[id] = input.value;
-    });
-    
-    // Sauvegarde des sliders
-    sliderInputs.forEach(id => {
-        const input = document.getElementById(id);
-        config.sliders[id] = input.value;
-    });
-
-    localStorage.setItem('warframeConfig', JSON.stringify(config));
-    showFlash("SAUVEGARDE RÉUSSIE");
-}
-
-function loadConfig() {
-    const data = localStorage.getItem('warframeConfig');
-    if (!data) {
-        showFlash("AUCUNE SAUVEGARDE");
-        return;
+    let found = false;
+    for (let i = 0; i < localStorage.length; i++) {
+        const key = localStorage.key(i);
+        if (key.startsWith(prefix)) {
+            found = true;
+            const saveName = key.replace(prefix, '');
+            const div = document.createElement('div');
+            div.className = 'save-item';
+            div.innerHTML = `<span class="save-name" onclick="loadNamedConfig('${key}')">${saveName}</span> 
+                             <button class="delete-save" onclick="deleteSave('${key}')">×</button>`;
+            list.appendChild(div);
+        }
     }
+    if(!found) list.innerHTML = '<div style="color:#888; padding:20px;">Aucune sauvegarde trouvée.</div>';
+    document.getElementById('load-modal').style.display = 'flex';
+}
+
+function closeLoadModal() { document.getElementById('load-modal').style.display = 'none'; }
+
+function loadNamedConfig(key) {
+    const data = localStorage.getItem(key);
+    if (!data) return;
     const config = JSON.parse(data);
     
+    // Restauration
     if (config.colors) {
         for (const [id, color] of Object.entries(config.colors)) {
-            if(color) updateColorBox(id, color);
+            const el = document.getElementById(id);
+            if (el && color) { el.style.backgroundColor = color; el.style.boxShadow = `0 0 10px ${color}`; el.style.borderColor = 'white'; }
         }
     }
-    if (config.texts) {
-        for (const [id, text] of Object.entries(config.texts)) {
-            const input = document.getElementById(id);
-            if (input) input.value = text;
-        }
+    if (config.texts) { for (const [id, val] of Object.entries(config.texts)) { const el = document.getElementById(id); if (el) el.value = val; } }
+    if (config.sliders) { for (const [id, val] of Object.entries(config.sliders)) { const el = document.getElementById(id); if (el) { el.value = val; updateVal(el); } } }
+    
+    // Image
+    if (config.img) {
+        const imgId = activeApp === 'warframe' ? 'img-wf' : 'img-op';
+        document.getElementById(imgId).src = config.img;
     }
-    if (config.sliders) {
-        for (const [id, val] of Object.entries(config.sliders)) {
-            const input = document.getElementById(id);
-            if (input) {
-                input.value = val;
-                // Met aussi à jour le texte à côté
-                updateSliderVal(input);
-            }
-        }
+
+    // Reset effets visuels
+    const prefix = activeApp === 'warframe' ? 'wf' : 'op';
+    const col1 = config.colors[`box-${prefix}-energy-1`];
+    const col2 = config.colors[`box-${prefix}-energy-2`];
+    if(col1) document.documentElement.style.setProperty('--energy-1', col1);
+    if(col2) document.documentElement.style.setProperty('--energy-2', col2);
+
+    closeLoadModal();
+    showFlash("CHARGÉ AVEC SUCCÈS");
+}
+
+function deleteSave(key) {
+    if(confirm("Supprimer cette sauvegarde ?")) {
+        localStorage.removeItem(key);
+        openLoadModal(); // Rafraichir la liste
     }
-    showFlash("CONFIGURATION CHARGÉE");
 }
 
 function resetConfig() {
-    if(confirm("Voulez-vous vraiment tout effacer ?")) {
-        localStorage.removeItem('warframeConfig');
-        
-        // Reset Textes
-        textInputs.forEach(id => {
-            const input = document.getElementById(id);
-            if(input) input.value = '';
-        });
-
-        // Reset Couleurs
-        colorSlots.forEach(id => {
-            const box = document.getElementById(`box-${id}`);
-            if (box) {
-                box.style.backgroundColor = ''; 
-                box.style.boxShadow = '';
-                box.style.borderColor = '';
-            }
-        });
-
-        // Reset Sliders
-        sliderInputs.forEach(id => {
-            const input = document.getElementById(id);
-            if(input) {
-                input.value = 0.5;
-                updateSliderVal(input); // Remet le texte à 0.50
-            }
-        });
-
-        // Reset Visuels
+    if (!activeApp) return;
+    if(confirm("Réinitialiser l'affichage actuel ?")) {
+        const els = getActiveElements();
+        els.colors.forEach(el => { el.style.backgroundColor = ''; el.style.boxShadow = ''; el.style.borderColor = ''; });
+        els.inputs.forEach(el => el.value = '');
+        els.sliders.forEach(el => { el.value = 0.5; updateVal(el); });
         document.documentElement.style.setProperty('--energy-1', 'transparent');
         document.documentElement.style.setProperty('--energy-2', 'transparent');
-        const img = document.getElementById('mainImage');
-        if (img) img.style.filter = '';
-
-        showFlash("RÉINITIALISATION TERMINÉE");
+        showFlash("RÉINITIALISÉ");
     }
 }
 
 function showFlash(msg) {
     const el = document.getElementById('flashMsg');
-    el.innerText = msg;
-    el.style.opacity = 1;
+    el.innerText = msg; el.style.opacity = 1;
     setTimeout(() => { el.style.opacity = 0; }, 2000);
 }
