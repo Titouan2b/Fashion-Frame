@@ -1,4 +1,3 @@
-// --- DONNEES ---
 const palettes = {
     "Classique": ["#4a1a1a", "#1a2b4a", "#1a4a2b", "#4a4a4a", "#222222", "#6e2626", "#263f6e", "#266e3f", "#6e6e6e", "#333333", "#943535", "#355494", "#359453", "#949494", "#444444", "#ba4545", "#4569ba", "#45ba69", "#bababa", "#555555", "#db5e5e", "#5e8adb", "#5edb8a", "#dbdbdb", "#666666", "#ff7a7a", "#7aaeff", "#7affae", "#ffffff", "#777777", "#ffa3a3", "#a3caff", "#a3ffca", "#eeeeee", "#888888", "#ffcccc", "#cce0ff", "#ccffe0", "#dddddd", "#999999", "#ffe6e6", "#e6f0ff", "#e6fff0", "#cccccc", "#aaaaaa"],
     "Fumée": generateGradient("#000000", "#ffffff", 90),
@@ -9,30 +8,32 @@ const palettes = {
 let currentSlotId = null;
 let currentPalette = 'Classique';
 
-// --- NAVIGATION UI ---
-// Gère les états : 'main', 'accessories', 'syandana'
 function navTo(target) {
     const container = document.getElementById('leftContainer');
-    // Reset
-    container.classList.remove('state-accessories', 'state-syandana');
+    // On retire toutes les classes d'état
+    container.classList.remove('state-accessories', 'state-syandana', 'state-regalia');
     
-    if (target === 'accessories') {
-        container.classList.add('state-accessories');
-    } else if (target === 'syandana') {
-        container.classList.add('state-syandana');
-    }
-    // Si 'main', on a déjà tout retiré, donc c'est bon.
-
-    // Fermer palette couleur au changement de menu
+    if (target === 'accessories') container.classList.add('state-accessories');
+    else if (target === 'syandana') container.classList.add('state-syandana');
+    else if (target === 'regalia') container.classList.add('state-regalia');
+    
     closePalette();
 }
 
-// --- COULEURS ---
+// Met à jour l'affichage du chiffre quand on bouge le slider
+function updateSliderVal(input) {
+    // Le span est juste après l'input dans le HTML
+    input.nextElementSibling.innerText = parseFloat(input.value).toFixed(2);
+}
+
 function openPalettePicker(slotId, element) {
     currentSlotId = slotId;
-    document.querySelectorAll('.slot-row').forEach(el => el.classList.remove('active'));
-    element.classList.add('active');
+    if (!slotId.match(/-[12]$/)) {
+         document.querySelectorAll('.slot-row').forEach(el => el.classList.remove('active'));
+         element.classList.add('active');
+    }
     document.getElementById('palettePanel').classList.add('open');
+    if(event) event.stopPropagation();
 }
 
 function closePalette() {
@@ -42,28 +43,27 @@ function closePalette() {
 
 function applyColor(hex) {
     if (!currentSlotId) return;
+    updateColorBox(currentSlotId, hex);
+}
 
-    const box = document.getElementById(`box-${currentSlotId}`);
+function updateColorBox(slotId, hex) {
+    const box = document.getElementById(`box-${slotId}`);
     if (box) {
         box.style.backgroundColor = hex;
         box.style.boxShadow = `0 0 10px ${hex}`;
+        box.style.borderColor = 'white';
     }
-
-    // Gestion "Energy"
-    if (currentSlotId.includes('energy')) {
-        document.documentElement.style.setProperty('--energy-color', hex);
-    }
-    // Teinte légère image si c'est la couleur principale Warframe
-    if (currentSlotId === 'wf-primary') {
-         document.getElementById('mainImage').style.filter = `drop-shadow(0 0 5px ${hex})`;
-    }
+    if (slotId === 'wf-energy-1') document.documentElement.style.setProperty('--energy-1', hex);
+    if (slotId === 'wf-energy-2') document.documentElement.style.setProperty('--energy-2', hex);
+    if (slotId === 'wf-primary') document.getElementById('mainImage').style.filter = `drop-shadow(0 0 5px ${hex})`;
 }
 
-// --- INIT ---
 window.onload = () => {
     renderTabs();
     renderGrid(currentPalette);
-    document.documentElement.style.setProperty('--energy-color', '#00e5ff');
+    if(localStorage.getItem('warframeConfig')) {
+        loadConfig();
+    }
 };
 
 function renderTabs() {
@@ -98,4 +98,128 @@ function generateGradient(start, end, steps) {
         arr.push(`#${h}${h}${h}`);
     }
     return arr;
+}
+
+// --- GESTION DES DONNEES ---
+const colorSlots = [
+    'wf-primary', 'wf-secondary', 'wf-tertiary', 'wf-accents', 
+    'wf-emissive-1', 'wf-emissive-2', 'wf-energy-1', 'wf-energy-2',
+    'acc-primary', 'acc-secondary', 'acc-tertiary', 'acc-accents',
+    'acc-emissive-1', 'acc-emissive-2', 'acc-energy-1', 'acc-energy-2',
+    'syn-primary', 'syn-secondary', 'syn-tertiary', 'syn-accents',
+    'syn-emissive-1', 'syn-emissive-2', 'syn-energy-1', 'syn-energy-2'
+];
+
+const textInputs = [
+    'input-aspect', 'input-helm', 'input-animation',
+    'input-torso', 'input-larm', 'input-rarm', 'input-lleg', 'input-rleg', 
+    'input-aux', 'input-ephemera', 'input-signa', 'input-syandana',
+    'input-badge-l', 'input-badge-r', 'input-sigil-f', 'input-sigil-b'
+];
+
+// Nouveaux inputs pour les sliders
+const sliderInputs = [
+    'input-regalia-slider-1', 'input-regalia-slider-2', 'input-regalia-slider-3',
+    'input-regalia-slider-4', 'input-regalia-slider-5', 'input-regalia-slider-6'
+];
+
+function saveConfig() {
+    const config = { colors: {}, texts: {}, sliders: {} };
+    
+    colorSlots.forEach(id => {
+        const box = document.getElementById(`box-${id}`);
+        config.colors[id] = box.style.backgroundColor; 
+    });
+    
+    textInputs.forEach(id => {
+        const input = document.getElementById(id);
+        config.texts[id] = input.value;
+    });
+    
+    // Sauvegarde des sliders
+    sliderInputs.forEach(id => {
+        const input = document.getElementById(id);
+        config.sliders[id] = input.value;
+    });
+
+    localStorage.setItem('warframeConfig', JSON.stringify(config));
+    showFlash("SAUVEGARDE RÉUSSIE");
+}
+
+function loadConfig() {
+    const data = localStorage.getItem('warframeConfig');
+    if (!data) {
+        showFlash("AUCUNE SAUVEGARDE");
+        return;
+    }
+    const config = JSON.parse(data);
+    
+    if (config.colors) {
+        for (const [id, color] of Object.entries(config.colors)) {
+            if(color) updateColorBox(id, color);
+        }
+    }
+    if (config.texts) {
+        for (const [id, text] of Object.entries(config.texts)) {
+            const input = document.getElementById(id);
+            if (input) input.value = text;
+        }
+    }
+    if (config.sliders) {
+        for (const [id, val] of Object.entries(config.sliders)) {
+            const input = document.getElementById(id);
+            if (input) {
+                input.value = val;
+                // Met aussi à jour le texte à côté
+                updateSliderVal(input);
+            }
+        }
+    }
+    showFlash("CONFIGURATION CHARGÉE");
+}
+
+function resetConfig() {
+    if(confirm("Voulez-vous vraiment tout effacer ?")) {
+        localStorage.removeItem('warframeConfig');
+        
+        // Reset Textes
+        textInputs.forEach(id => {
+            const input = document.getElementById(id);
+            if(input) input.value = '';
+        });
+
+        // Reset Couleurs
+        colorSlots.forEach(id => {
+            const box = document.getElementById(`box-${id}`);
+            if (box) {
+                box.style.backgroundColor = ''; 
+                box.style.boxShadow = '';
+                box.style.borderColor = '';
+            }
+        });
+
+        // Reset Sliders
+        sliderInputs.forEach(id => {
+            const input = document.getElementById(id);
+            if(input) {
+                input.value = 0.5;
+                updateSliderVal(input); // Remet le texte à 0.50
+            }
+        });
+
+        // Reset Visuels
+        document.documentElement.style.setProperty('--energy-1', 'transparent');
+        document.documentElement.style.setProperty('--energy-2', 'transparent');
+        const img = document.getElementById('mainImage');
+        if (img) img.style.filter = '';
+
+        showFlash("RÉINITIALISATION TERMINÉE");
+    }
+}
+
+function showFlash(msg) {
+    const el = document.getElementById('flashMsg');
+    el.innerText = msg;
+    el.style.opacity = 1;
+    setTimeout(() => { el.style.opacity = 0; }, 2000);
 }
