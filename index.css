@@ -58,6 +58,7 @@ body {
     opacity: 0.2;
     mix-blend-mode: screen;
     pointer-events: none;
+    z-index: -1;
 }
 
 /* --- MENU GAUCHE (CONTAINER) --- */
