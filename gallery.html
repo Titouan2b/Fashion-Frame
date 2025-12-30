@@ -1,0 +1,270 @@
+<!DOCTYPE html>
+<html lang="fr">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Warframe - Galerie Fashion Frame</title>
+    <link href="https://fonts.googleapis.com/css2?family=Orbitron:wght@400;700&family=Roboto:wght@300;400&display=swap" rel="stylesheet">
+    <style>
+        :root {
+            --bg-dark: #050505;
+            --panel-bg: rgba(20, 20, 25, 0.95);
+            --border: rgba(255, 255, 255, 0.2);
+            --highlight: #d4af37;
+            --highlight-op: #00e5ff; /* Bleu pour opérateur */
+            --text-main: #eeeeee;
+        }
+
+        body {
+            margin: 0;
+            background: radial-gradient(circle at top center, #1a1a24 0%, #050505 100%);
+            min-height: 100vh;
+            color: var(--text-main);
+            font-family: 'Roboto', sans-serif;
+            overflow-x: hidden;
+        }
+
+        /* Arrière-plan */
+        .fog {
+            position: fixed; top: 0; left: 0; width: 100%; height: 100%;
+            background: url('https://www.transparenttextures.com/patterns/stardust.png');
+            opacity: 0.1; pointer-events: none; z-index: -1;
+        }
+
+        /* Navigation */
+        .nav-header {
+            display: flex; justify-content: space-between; align-items: center;
+            padding: 20px 50px;
+            background: rgba(0,0,0,0.8);
+            border-bottom: 1px solid var(--border);
+            position: sticky; top: 0; z-index: 100;
+            backdrop-filter: blur(10px);
+        }
+
+        .nav-title { font-family: 'Orbitron'; font-size: 24px; color: white; letter-spacing: 2px; }
+        .nav-btn {
+            background: transparent; border: 1px solid var(--highlight); color: var(--highlight);
+            padding: 10px 20px; font-family: 'Orbitron'; cursor: pointer; text-decoration: none;
+            transition: 0.3s; text-transform: uppercase;
+        }
+        .nav-btn:hover { background: var(--highlight); color: black; }
+
+        /* Conteneur Principal */
+        .gallery-container {
+            max-width: 1200px; margin: 0 auto; padding: 40px 20px;
+        }
+
+        /* Sections */
+        .section-header {
+            font-family: 'Orbitron'; font-size: 30px; margin-bottom: 30px;
+            border-bottom: 2px solid var(--border); padding-bottom: 10px;
+            display: flex; align-items: center; gap: 15px;
+        }
+        .section-wf { color: var(--highlight); border-color: var(--highlight); }
+        .section-op { color: var(--highlight-op); border-color: var(--highlight-op); margin-top: 60px; }
+
+        /* Grille */
+        .grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fill, minmax(250px, 1fr));
+            gap: 25px;
+        }
+
+        /* Carte Fashion */
+        .fashion-card {
+            background: var(--panel-bg);
+            border: 1px solid var(--border);
+            border-radius: 4px;
+            overflow: hidden;
+            transition: all 0.3s ease;
+            position: relative;
+            cursor: pointer;
+            height: 350px;
+            display: flex; flex-direction: column;
+        }
+
+        .fashion-card:hover {
+            transform: translateY(-5px);
+            box-shadow: 0 10px 30px rgba(0,0,0,0.5);
+            border-color: white;
+        }
+
+        .card-img-container {
+            width: 100%; height: 250px;
+            background: #111;
+            display: flex; justify-content: center; align-items: center;
+            overflow: hidden;
+            border-bottom: 1px solid var(--border);
+        }
+
+        .card-img {
+            width: 100%; height: 100%;
+            object-fit: cover; /* Remplit la case */
+            transition: 0.5s;
+        }
+        .fashion-card:hover .card-img { transform: scale(1.1); }
+
+        .card-info {
+            padding: 15px;
+            flex: 1;
+            display: flex; justify-content: space-between; align-items: center;
+        }
+
+        .card-title {
+            font-family: 'Orbitron'; font-size: 14px; font-weight: bold;
+            white-space: nowrap; overflow: hidden; text-overflow: ellipsis;
+            max-width: 180px;
+        }
+
+        .btn-delete {
+            background: none; border: none; color: #555;
+            font-size: 18px; cursor: pointer; transition: 0.2s;
+        }
+        .btn-delete:hover { color: #ff4444; }
+
+        .empty-msg {
+            grid-column: 1 / -1;
+            text-align: center; color: #666; font-style: italic; padding: 40px;
+            border: 1px dashed #333;
+        }
+
+        /* MODALE IMAGE PLEIN ECRAN */
+        #view-modal {
+            display: none; position: fixed; top: 0; left: 0; width: 100%; height: 100%;
+            background: rgba(0,0,0,0.95); z-index: 2000;
+            justify-content: center; align-items: center; flex-direction: column;
+        }
+        #modal-img { max-width: 90%; max-height: 80vh; border: 2px solid var(--highlight); box-shadow: 0 0 50px rgba(0,0,0,0.5); }
+        .close-modal {
+            margin-top: 20px; padding: 10px 30px; background: transparent; border: 1px solid white; color: white;
+            font-family: 'Orbitron'; cursor: pointer; text-transform: uppercase; transition: 0.2s;
+        }
+        .close-modal:hover { background: white; color: black; }
+
+    </style>
+</head>
+<body>
+
+    <div class="fog"></div>
+
+    <!-- Navigation -->
+    <div class="nav-header">
+        <div class="nav-title">GALERIE DE L'ARSENAL</div>
+        <!-- IMPORTANT: Mettre le bon nom de ton fichier principal ici -->
+        <a href="./index.html" class="nav-btn">Retour à l'Éditeur</a>
+    </div>
+
+    <div class="gallery-container">
+        
+        <!-- SECTION WARFRAME -->
+        <div class="section-header section-wf">
+            <span>◈</span> WARFRAMES
+        </div>
+        <div class="grid" id="grid-warframe">
+            <!-- JS va remplir ça -->
+        </div>
+
+        <!-- SECTION OPERATEUR -->
+        <div class="section-header section-op">
+            <span>웃</span> OPÉRATEUR / VOYAGEUR
+        </div>
+        <div class="grid" id="grid-operator">
+            <!-- JS va remplir ça -->
+        </div>
+
+    </div>
+
+    <!-- Modale Vue -->
+    <div id="view-modal" onclick="closeModal(event)">
+        <img id="modal-img" src="" alt="Full View">
+        <button class="close-modal" onclick="closeModal(event)">Fermer</button>
+    </div>
+
+    <script>
+        window.onload = function() {
+            renderGallery();
+        };
+
+        function renderGallery() {
+            const wfGrid = document.getElementById('grid-warframe');
+            const opGrid = document.getElementById('grid-operator');
+            
+            wfGrid.innerHTML = '';
+            opGrid.innerHTML = '';
+
+            let wfCount = 0;
+            let opCount = 0;
+
+            // Parcourir toutes les clés du LocalStorage
+            for (let i = 0; i < localStorage.length; i++) {
+                const key = localStorage.key(i);
+                
+                // Si c'est une sauvegarde Warframe
+                if (key.startsWith('warframe_save_')) {
+                    const data = JSON.parse(localStorage.getItem(key));
+                    const name = key.replace('warframe_save_', '');
+                    createCard(wfGrid, name, data, key, 'wf');
+                    wfCount++;
+                }
+                // Si c'est une sauvegarde Opérateur
+                else if (key.startsWith('operator_save_')) {
+                    const data = JSON.parse(localStorage.getItem(key));
+                    const name = key.replace('operator_save_', '');
+                    createCard(opGrid, name, data, key, 'op');
+                    opCount++;
+                }
+            }
+
+            // Messages si vide
+            if (wfCount === 0) wfGrid.innerHTML = '<div class="empty-msg">Aucune configuration Warframe sauvegardée.</div>';
+            if (opCount === 0) opGrid.innerHTML = '<div class="empty-msg">Aucune configuration Opérateur sauvegardée.</div>';
+        }
+
+        function createCard(container, name, data, key, type) {
+            const card = document.createElement('div');
+            card.className = 'fashion-card';
+            
+            // Image par défaut si pas d'image sauvegardée
+            let imgSrc = data.img ? data.img : 'https://via.placeholder.com/300x400/111/fff?text=No+Image';
+            
+            // Bordure de couleur selon type
+            if(type === 'op') card.style.borderColor = 'rgba(0, 229, 255, 0.3)';
+
+            card.innerHTML = `
+                <div class="card-img-container" onclick="openModal('${imgSrc}')">
+                    <img src="${imgSrc}" class="card-img" alt="${name}">
+                </div>
+                <div class="card-info">
+                    <div class="card-title">${name}</div>
+                    <button class="btn-delete" onclick="deleteSave('${key}')" title="Supprimer">🗑</button>
+                </div>
+            `;
+            container.appendChild(card);
+        }
+
+        function deleteSave(key) {
+            if(confirm("Êtes-vous sûr de vouloir supprimer cette sauvegarde ?")) {
+                localStorage.removeItem(key);
+                renderGallery(); // Recharger la grille
+            }
+        }
+
+        // --- Modale ---
+        function openModal(src) {
+            if(src.includes('placeholder')) return; // Pas de zoom sur placeholder
+            const modal = document.getElementById('view-modal');
+            const img = document.getElementById('modal-img');
+            img.src = src;
+            modal.style.display = 'flex';
+        }
+
+        function closeModal(e) {
+            // Fermer si on clique sur le fond ou le bouton, pas l'image
+            if(e.target.id === 'view-modal' || e.target.className === 'close-modal') {
+                document.getElementById('view-modal').style.display = 'none';
+            }
+        }
+
+    </script>
+</body>
+</html>
